@@ -1,4 +1,4 @@
-﻿# ETS2 Instrument Cluster
+# ETS2 Instrument Cluster
 
 A stand-alone digital instrument cluster for Euro Truck Simulator 2. It runs in its own window, so you can put it anywhere on your screens, away from the ETS2 GPS window.
 
@@ -38,9 +38,15 @@ Needs Windows 10 or 11 (64-bit). Nothing else to install: the program carries th
 | Opacity | Ctrl + mouse wheel, or right-click > Opacity |
 | Full screen | Double-click, or **F11** (Esc to leave) |
 | Always on top | Right-click > Always on top (on by default). The game must be windowed or borderless for another window to show above it |
-| Menu | Right-click: always on top, opacity, size presets, units (km/h or mph), show the make, reset trip, telemetry server address, reset window, close |
+| Menu | Right-click: always on top, opacity, size presets, units (km/h or mph), show the make, reset trip, telemetry server address, reset window, update checks, close |
 
 The position, size, opacity and options are remembered in `%APPDATA%\ETS2-Cluster\cluster.json`. The trip counter starts the first time the cluster sees the truck; **Reset trip** restarts the trip distance and the trip consumption. Refuelling is ignored when working out the trip consumption.
+
+## Updates
+
+The cluster looks for a newer release on GitHub a few seconds after it starts and then about once a day. When there is one, a small notice appears at the bottom of the cluster; right-click it to open the download page, or to **Skip this version**. **Check for updates now...** looks immediately, and **Check for updates automatically** (on by default) switches the checks off.
+
+Nothing is downloaded or installed for you. The check is one small request to pi.github.com, which sees your IP address like any web page does; the cluster sends no information about you or your PC, and it only ever opens a page on github.com. Offline, it does nothing.
 
 ## Building
 

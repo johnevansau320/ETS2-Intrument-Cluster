@@ -1,7 +1,7 @@
 ; Inno Setup script for the ETS2 Instrument Cluster. Build with build-installer.ps1 (needs Inno Setup 6).
 ; Installs for the current user only (no administrator rights).
 #define AppName "ETS2 Instrument Cluster"
-#define AppVer "1.0.0"
+#define AppVer "1.1.0"
 
 [Setup]
 AppId={{C41D7E26-9B3A-4F58-A1D0-6E2B9F7C3A15}

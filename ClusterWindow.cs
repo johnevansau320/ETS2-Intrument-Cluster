@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -55,6 +56,7 @@ public sealed class ClusterWindow : Window
             tel.Status += s => Dispatcher.BeginInvoke(new Action(() => { if (view.StatusText != s) { view.StatusText = s; dirty = true; } }));
             tel.Start();
         }
+        if (snapshot == null || UpdateCheck.FakeVersion != null) StartUpdateChecks();
 
         if (snapshot != null)
         {
@@ -196,6 +198,17 @@ public sealed class ClusterWindow : Window
         m.Items.Add(Item("Telemetry server address...", AskHost));
         m.Items.Add(Item("Reset window position and size", () => { WindowState = WindowState.Normal; Width = 960; Height = 540; WindowStartupLocation = WindowStartupLocation.CenterScreen; Left = (SystemParameters.PrimaryScreenWidth - Width) / 2; Top = (SystemParameters.PrimaryScreenHeight - Height) / 2; }));
         m.Items.Add(new Separator());
+        updateItem = Item("", () => { if (update != null) OpenPage(update.PageUrl); });
+        updateItem.FontWeight = FontWeights.Bold; updateItem.Visibility = Visibility.Collapsed;
+        skipItem = Item("Skip this version", () => { if (update != null) { cfg.SkippedVersion = update.Latest.ToString(3); cfg.Save(); SetUpdate(update); } });
+        skipItem.Visibility = Visibility.Collapsed;
+        m.Items.Add(updateItem); m.Items.Add(skipItem);
+        var auto = Item("Check for updates automatically", () => { }, true, cfg.CheckUpdates);
+        auto.Click += (_, _) => { cfg.CheckUpdates = auto.IsChecked; cfg.Save(); if (!cfg.CheckUpdates) SetUpdate(null); };
+        m.Items.Add(auto);
+        m.Items.Add(Item("Check for updates now...", CheckNow));
+        m.Items.Add(new MenuItem { Header = "ETS2 Instrument Cluster " + UpdateCheck.CurrentText, IsEnabled = false });
+        m.Items.Add(new Separator());
         m.Items.Add(Item("Close", Close));
         return m;
     }
@@ -214,11 +227,71 @@ public sealed class ClusterWindow : Window
         w.ShowDialog();
     }
 
+    // ------------------------------------------------------------------------------------------ updates
+
+    UpdateInfo? update;
+    MenuItem? updateItem, skipItem;
+
+    /// <summary>Looks for a newer release a few seconds after start and then about once a day while the cluster stays open (switch off in the menu).</summary>
+    void StartUpdateChecks()
+    {
+        bool test = UpdateCheck.FakeVersion != null;
+        var first = new DispatcherTimer { Interval = TimeSpan.FromSeconds(test ? 0.4 : 8) };
+        first.Tick += async (_, _) => { first.Stop(); await AutoCheckAsync(); };
+        first.Start();
+        var daily = new DispatcherTimer { Interval = TimeSpan.FromHours(6) };
+        daily.Tick += async (_, _) => await AutoCheckAsync();
+        daily.Start();
+    }
+
+    async Task AutoCheckAsync()
+    {
+        bool test = UpdateCheck.FakeVersion != null;
+        if (!cfg.CheckUpdates && !test) return;
+        long now = DateTime.UtcNow.Ticks;
+        if (!test && now - cfg.LastUpdateCheckUtc < TimeSpan.FromHours(20).Ticks) return;
+        try
+        {
+            var u = await UpdateCheck.CheckAsync();
+            if (!test) { cfg.LastUpdateCheckUtc = now; cfg.Save(); }
+            SetUpdate(u);
+        }
+        catch { /* offline or GitHub busy: try again later */ }
+    }
+
+    void SetUpdate(UpdateInfo? u)
+    {
+        update = u != null && u.Latest.ToString(3) != cfg.SkippedVersion ? u : null;
+        view.UpdateText = update != null ? "Update " + update.Latest.ToString(3) + " available - right-click for details" : "";
+        if (updateItem != null) { updateItem.Visibility = update != null ? Visibility.Visible : Visibility.Collapsed; if (update != null) updateItem.Header = "Version " + update.Latest.ToString(3) + " is available: open the download page"; }
+        if (skipItem != null) skipItem.Visibility = update != null ? Visibility.Visible : Visibility.Collapsed;
+        dirty = true; view.InvalidateVisual();
+    }
+
+    async void CheckNow()
+    {
+        try
+        {
+            var u = await UpdateCheck.CheckAsync();
+            cfg.LastUpdateCheckUtc = DateTime.UtcNow.Ticks; cfg.SkippedVersion = ""; cfg.Save();
+            SetUpdate(u);
+            if (u == null) MessageBox.Show(this, "You have the latest version (" + UpdateCheck.CurrentText + ").", "ETS2 Instrument Cluster", MessageBoxButton.OK, MessageBoxImage.Information);
+            else if (MessageBox.Show(this, "Version " + u.Latest.ToString(3) + " is available (you have " + UpdateCheck.CurrentText + ").\n\nOpen the download page?", "ETS2 Instrument Cluster", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                OpenPage(u.PageUrl);
+        }
+        catch { MessageBox.Show(this, "Could not reach GitHub to look for updates. Check your internet connection and try again.", "ETS2 Instrument Cluster", MessageBoxButton.OK, MessageBoxImage.Warning); }
+    }
+
+    static void OpenPage(string url)
+    {
+        try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); } catch { /* no browser */ }
+    }
+
     // ------------------------------------------------------------------------------------------ test hook
 
     void SaveSnapshot(string path)
     {
-        var tmp = new ClusterControl { T = view.T, Cfg = cfg, TripKm = view.TripKm, TripLPer100 = view.TripLPer100, StatusText = view.StatusText };
+        var tmp = new ClusterControl { T = view.T, Cfg = cfg, TripKm = view.TripKm, TripLPer100 = view.TripLPer100, StatusText = view.StatusText, UpdateText = view.UpdateText };
         tmp.Measure(new Size(1280, 720)); tmp.Arrange(new Rect(0, 0, 1280, 720));
         int steps = 0; while (steps < 400 && tmp.Step(0.1)) steps++;
         tmp.InvalidateVisual(); tmp.UpdateLayout();

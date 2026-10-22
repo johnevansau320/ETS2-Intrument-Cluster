@@ -19,6 +19,8 @@ public sealed class ClusterControl : FrameworkElement
     public Settings Cfg = new();
     public double TripKm, TripLPer100 = -1;
     public string StatusText = "";
+    /// <summary>Shown as a small notice at the bottom when a newer release exists.</summary>
+    public string UpdateText = "";
 
     // smoothed values (the needle glides between telemetry updates)
     double dispSpeed, dispRpm, dispFuel, dispAdBlue;
@@ -200,6 +202,14 @@ public sealed class ClusterControl : FrameworkElement
         Revs(dc);
         Panels(dc);
         Lamps(dc);
+
+        if (UpdateText.Length > 0)
+        {
+            var ft = Text(UpdateText, 21, Amber);
+            var rect = new Rect(640 - ft.Width / 2 - 18, 668, ft.Width + 36, 34);
+            dc.DrawRoundedRectangle(Fz(Color.FromRgb(30, 22, 8)), PenOf(Amber, 1.6), rect, 8, 8);
+            dc.DrawText(ft, new Point(rect.X + 18, rect.Y + 17 - ft.Height / 2));
+        }
 
         if (StatusText.Length > 0)
         {

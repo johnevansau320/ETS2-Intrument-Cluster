@@ -16,6 +16,11 @@ public sealed class Settings
     /// <summary>Show the truck make (VOLVO ...) under the speed.</summary>
     public bool ShowMake { get; set; } = true;
     public string Host { get; set; } = "127.0.0.1:31377";
+    /// <summary>Look for a newer release on GitHub now and then (about once a day). Nothing is downloaded or installed by it.</summary>
+    public bool CheckUpdates { get; set; } = true;
+    public long LastUpdateCheckUtc { get; set; }
+    /// <summary>A version the user chose to skip: no notice for it.</summary>
+    public string SkippedVersion { get; set; } = "";
     /// <summary>Odometer reading when the trip counter was last reset.</summary>
     public double TripBaseKm { get; set; } = double.NaN;
 

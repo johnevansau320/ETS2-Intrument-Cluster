@@ -14,6 +14,7 @@ public static class Program
         Settings.PathOverride = Arg("--config");
         var cfg = Settings.Load();
         if (Arg("--host") is { } host) cfg.Host = host;
+        UpdateCheck.FakeVersion = Arg("--fake-version");   // test only: pretend to be this version
 
         var app = new Application { ShutdownMode = ShutdownMode.OnMainWindowClose };
         app.DispatcherUnhandledException += (_, e) =>
