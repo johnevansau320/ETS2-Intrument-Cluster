@@ -17,6 +17,7 @@ public sealed class ClusterWindow : Window
     readonly DispatcherTimer saveTimer = new() { Interval = TimeSpan.FromMilliseconds(700) };
     readonly bool demo;
     long lastTick;
+    int lastMinute = -1;
     bool dirty = true;
 
     // trip tracking
@@ -118,6 +119,8 @@ public sealed class ClusterWindow : Window
         long now = Environment.TickCount64;
         double dt = Math.Min(0.1, Math.Max(0.001, (now - lastTick) / 1000.0)); lastTick = now;
         bool moving = view.Step(dt);
+        int minute = DateTime.Now.Minute;
+        if (minute != lastMinute) { lastMinute = minute; dirty = true; }   // the local time on the cluster
         if (moving || dirty) { dirty = false; view.InvalidateVisual(); }
     }
 

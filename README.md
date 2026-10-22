@@ -25,7 +25,7 @@ Needs Windows 10 or 11 (64-bit). Nothing else to install: the program carries th
 * **Gear** (A 12 for an automatic in 12th, N, R) and a **rev strip** with the rpm marker (amber near the limiter).
 * **Diesel** (green) and **AdBlue** (blue) gauges either side of the dial, with the percentage.
 * **Average consumption** (the game's figure), **this trip** (measured since the trip was reset), **range**, **cruise setting**, **arrival time (ETA)** and **speed limit**.
-* **Coolant** and **oil** temperature, **game time**, **time until you must rest**, **trip** distance and **odometer**.
+* **Coolant** and **oil** temperature, **game time**, **time until you must rest**, the PC's **local time** in large digits in the middle of the bottom row, **trip** distance and **odometer**.
 * Lamps: both turn signals, low and high beam; tags for the parking brake, engine brake, retarder step, wipers, beacon and the warnings (air pressure, oil pressure, coolant, battery, low fuel, low AdBlue).
 * The truck make under the speed (VOLVO, SCANIA ...), which can be switched off.
 

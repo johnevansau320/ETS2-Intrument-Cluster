@@ -206,9 +206,9 @@ public sealed class ClusterControl : FrameworkElement
         if (UpdateText.Length > 0)
         {
             var ft = Text(UpdateText, 21, Amber);
-            var rect = new Rect(640 - ft.Width / 2 - 18, 668, ft.Width + 36, 34);
+            var rect = new Rect(640 - ft.Width / 2 - 18, 556, ft.Width + 36, 32);
             dc.DrawRoundedRectangle(Fz(Color.FromRgb(30, 22, 8)), PenOf(Amber, 1.6), rect, 8, 8);
-            dc.DrawText(ft, new Point(rect.X + 18, rect.Y + 17 - ft.Height / 2));
+            dc.DrawText(ft, new Point(rect.X + 18, rect.Y + 16 - ft.Height / 2));
         }
 
         if (StatusText.Length > 0)
@@ -286,6 +286,9 @@ public sealed class ClusterControl : FrameworkElement
         Draw(dc, "GAME TIME", 50, 622, 16, Dim, 0, true); Draw(dc, Clock(t.GameTime), 50, 656, 34, White, 0);
         Draw(dc, "REST IN", 250, 622, 16, Dim, 0, true); Draw(dc, HoursMinutes(t.RestMin), 250, 656, 34, t.RestMin >= 0 && t.RestMin < 30 ? Amber : White, 0);
         Draw(dc, "TRIP", DW - 330, 622, 16, Dim, 2, true); Draw(dc, Math.Round(Dist(TripKm)).ToString(CultureInfo.InvariantCulture) + " " + DistUnit, DW - 330, 656, 34, White, 2);
+        // the PC's local time, large, in the middle of the bottom row
+        Draw(dc, "LOCAL TIME", 640, 612, 16, Dim, 1, true);
+        Draw(dc, DateTime.Now.ToString("HH:mm", CultureInfo.InvariantCulture), 640, 660, 62, White, 1);
         Draw(dc, "ODOMETER", DW - 50, 622, 16, Dim, 2, true); Draw(dc, Math.Round(Dist(t.OdoKm)).ToString(CultureInfo.InvariantCulture) + " " + DistUnit, DW - 50, 656, 34, White, 2);
     }
 
