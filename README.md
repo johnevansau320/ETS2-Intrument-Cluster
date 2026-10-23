@@ -6,7 +6,7 @@ A stand-alone digital instrument cluster for Euro Truck Simulator 2. It runs in 
 
 It reads the live truck data from the **TruckSim GPS Telemetry Server** (default `127.0.0.1:31377`), the same source the [ETS2 GPS](https://github.com/johnevansau320/ETS2GPS-Win) apps use. It does not touch the game and sends nothing to it.
 
-**User guide:** [ETS2-Instrument-Cluster-Guide.pdf](docs/ETS2-Instrument-Cluster-Guide.pdf) (installing, reading the cluster, the menu, using it with the GPS, troubleshooting).
+**User guide:** [ETS2-Instrument-Cluster-Guide.pdf](docs/ETS2-Instrument-Cluster-Guide.pdf) (installing, reading the cluster, the menu, using it with the GPS, the Android version, troubleshooting).
 
 ## Install
 
@@ -28,6 +28,12 @@ Needs Windows 10 or 11 (64-bit). Nothing else to install: the program carries th
 * **Coolant** and **oil** temperature, **game time**, **time until you must rest**, the PC's **local time** in large digits in the middle of the bottom row, **trip** distance and **odometer**.
 * Lamps: both turn signals, low and high beam; tags for the parking brake, engine brake, retarder step, wipers, beacon and the warnings (air pressure, oil pressure, coolant, battery, low fuel, low AdBlue).
 * The truck make under the speed (VOLVO, SCANIA ...), which can be switched off.
+
+## Android version
+
+The same cluster, full screen, for an Android 7.0+ tablet or phone on the same Wi-Fi as the game PC. Download **`Ets2Cluster-<version>.apk`** from the [Releases](../../releases) page and open it (Android asks to allow installs from your browser or file manager). Then long-press the cluster, choose **PC address** and enter the game PC's address (for example `192.168.1.20`; port 31377 is assumed). Enter `demo` to see made-up values without the game. The PC's firewall must allow port 31377.
+
+The menu (long-press) has the PC address, km or miles, show the truck name, reset trip and the update check. The local time at the bottom is the tablet's clock. The app is signed with a development key (not on Google Play), so Android or Play Protect may ask for confirmation; the release page lists the SHA-256 checksum. The source is in [`android/`](android) (plain Android APIs, no third-party libraries): `gradle testDebugUnitTest assembleDebug`.
 
 ## Using it
 
