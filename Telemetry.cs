@@ -69,6 +69,9 @@ public static class TelemetryParser
             GameTime = Time(Str(game, "time")),
             EtaMin = Minutes(Str(nav, "estimatedTime")), RestMin = Minutes(Str(game, "nextRestStopTime")),
         };
+        // the telemetry server never sends the fuel / AdBlue warning lamps: light them from the levels, as the game does (at 15 %)
+        if (tr.Connected && tr.FuelCapL > 0 && tr.FuelFraction <= 0.15f) tr.FuelWarn = true;
+        if (tr.Connected && tr.AdBlueCapL > 0 && tr.AdBlueFraction <= 0.15f) tr.AdBlueWarn = true;
         return tr;
     }
 }

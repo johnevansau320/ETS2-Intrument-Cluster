@@ -32,4 +32,13 @@ class TelemetryTest {
         val a = TelemetryParser.demo(); val b = TelemetryParser.demo("over")
         assertNotEquals(a.signature(), b.signature())
     }
+
+    @Test fun fuelAndAdBlueWarningsComeFromTheLevels() {
+        fun truck(fuel: Int, adblue: Int) = TelemetryParser.parse("""{"game":{"connected":true},"truck":{"fuel":$fuel,"fuelCapacity":1500,"adblue":$adblue,"adblueCapacity":60}}""")
+        val low = truck(200, 5)
+        assertTrue(low.fuelWarn); assertTrue(low.adBlueWarn)
+        val ok = truck(1200, 40)
+        assertFalse(ok.fuelWarn); assertFalse(ok.adBlueWarn)
+        assertFalse(TelemetryParser.parse("""{"game":{"connected":false},"truck":{"fuel":0,"fuelCapacity":0}}""").fuelWarn)
+    }
 }

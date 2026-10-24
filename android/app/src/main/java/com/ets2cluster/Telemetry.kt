@@ -75,6 +75,9 @@ object TelemetryParser {
         val gm = minutes(game.optString("time", ""))
         tr.gameClockMin = if (gm < 0) -1 else (gm.toInt() % 1440)
         tr.etaMin = minutes(nav.optString("estimatedTime", "")); tr.restMin = minutes(game.optString("nextRestStopTime", ""))
+        // the telemetry server never sends the fuel / AdBlue warning lamps: light them from the levels, as the game does (at 15 %)
+        if (tr.connected && tr.fuelCapL > 0 && tr.fuelFraction <= 0.15f) tr.fuelWarn = true
+        if (tr.connected && tr.adBlueCapL > 0 && tr.adBlueFraction <= 0.15f) tr.adBlueWarn = true
         return tr
     }
 
